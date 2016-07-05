@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @license Copyright 2011-2014 BitPay Inc., MIT License
+ * 
+ */
+ -->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <payment>
+            <bitpay>
+                <fullscreen>0</fullscreen>
+                <active>1</active>
+                <model>\Bitpay\Core\Model\Method\Bitcoin</model>
+                <order_status>new</order_status>
+                <payment_action>authorize</payment_action>
+                <title>Bitcoin</title>
+                <network>testnet</network>
+                <debug>0</debug>
+                <notification_url>bitpay/ipn</notification_url>
+                <redirect_url>checkout/onepage/success</redirect_url>
+                <speed>medium</speed>
+                <allowspecific>0</allowspecific>
+                <sort_order>1</sort_order>
+                <invoice_new>new</invoice_new>
+                <invoice_paid>processing</invoice_paid>
+                <invoice_confirmed>processing</invoice_confirmed>
+                <invoice_complete>complete</invoice_complete>
+                <invoice_expired>canceled</invoice_expired>
+                <invoice_invalid>canceled</invoice_invalid>
+            </bitpay>
+        </payment>
+    </default>
+</config>
