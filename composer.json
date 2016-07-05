@@ -1,7 +1,7 @@
 {
     "name": "bitpay/magento2-plugin",
     "description": "Bitcoin payment module using the bitpay.com service",
-    "keywords": ["magento","bitcoin"],
+    "keywords": ["magento2", "magento","bitcoin"],
     "minimum-stability": "stable",
     "type": "magento2-plugin",
     "homepage": "https://github.com/bitpay/magento2-plugin",
