@@ -1,0 +1,41 @@
+<?php 
+/**
+ * @license Copyright 2011-2014 BitPay Inc., MIT License
+ * @see https://github.com/bitpay/magento-plugin/blob/master/LICENSE
+ */
+$url = $block->getFrameActionUrl();
+?>
+<div class="sm-12">
+    <iframe src="<?php  echo $url; ?>" style="width:500px; height:150px; overflow:hidden; border:none; margin:auto; display:block;" scrolling="no" allowtransparency="true" frameborder="0"> </iframe><br/>
+</div>
+<?php     
+$quoteId = $block->getLastQuoteId();
+$check_url     = $block->getValidateUrl();
+?>
+<div class="actions-toolbar" id="order-button" style="display: none;width:130px;margin: 0 auto;">
+    <div class="primary">
+        <a class="action primary continue" id="bitpayButton" href="<?php /* @escapeNotVerified */ echo $block->getSuccessUrl() ?>"><span><?php /* @escapeNotVerified */ echo __('Place Order') ?></span></a>
+    </div>
+</div>
+<script type="text/javascript">
+//<![CDATA[
+ require(['jquery'], function () {
+    jQuery( document ).ready(function() {
+        window.setInterval(function(){
+            jQuery.ajax( {
+                url: '<?php echo $check_url; ?>',
+                data: {quote: <?php echo $quoteId; ?>},
+                type: 'GET'
+            }).done(function(a) { 
+                if(a.paid){
+                    document.getElementById('order-button').style.display = 'block';
+                } else {
+                    console.log('<?php echo __('Not Paid.'); ?>');
+                }
+            });
+            return false;
+        }, 5000);
+    });
+ });
+//]]>
+</script>  
