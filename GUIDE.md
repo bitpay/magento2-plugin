@@ -32,6 +32,13 @@ All you need to do is paste the extension key and click on the *Install* button.
 
 Visit the [Releases](https://github.com/bitpay/magento2-plugin/releases) page of this repository and download the latest version. Once this is done, you can just unzip the contents and use any method you want to put them on your server. The contents will mirror the Magento directory structure.
 
+1. Disable cache, system -> cache management
+2. Copy in app and lib directories from plugin zip file to Magento2 root directory, app and lib
+3. Run 'php -f bin/magento setup:upgrade' from command line on server
+4. Run 'php -f bin/magento setup:di:compile' from command line on server
+5. In admin interface, go to stores -> configuration -> advanced -> advanced, turn on 'Bitpay_Core'
+6. Then in stores -> configuration -> payment methods, you should have Bitpay as a payment method
+
 **NOTE:** These files can also up uploaded using the *Magento Connect Manager* that comes with your Magento Store
 
 **WARNING:** It is good practice to backup your database before installing extensions. Please make sure you Create Backups.
@@ -42,11 +49,14 @@ Visit the [Releases](https://github.com/bitpay/magento2-plugin/releases) page of
 Using [modman](https://github.com/colinmollenhour/modman) you can install the BitPay Magento Plugin. Once you have modman installed, run `modman init` if you have not already done so. Next just run `modman clone https://github.com/bitpay/magento2-plugin.git` in the root of the Magento installation. In this case it is `/var/www/magento`.
 
 
+**NOTE:** You will need to follow the above steps under "From Releases Page" after retrieving the code by running modman.
+
+
 ## Configuration
 
 Configuration can be done using the Administrator section of your Magento store. Once Logged in, you will find the configuration settings under **Stores > Configuration > Sales > Payment Methods**.
 
-![BitPay Magento Settings](https://raw.githubusercontent.com/bitpay/magento2-plugin/master/docs/MagentoSettings.png "BitPay Magento Settings")
+![BitPay Magento Settings](https://raw.githubusercontent.com/bitpay/magento2-plugin/master/docs/Magento2Settings.png "BitPay Magento Settings")
 
 Here your will need to create a [pairing code](https://bitpay.com/api-tokens) using your BitPay merchant account. Once you have a Pairing Code, put the code in the Pairing Code field. This will take care of the rest for you.
 
@@ -56,7 +66,7 @@ Here your will need to create a [pairing code](https://bitpay.com/api-tokens) us
 
 You are also able to configure how BitPay's IPN (Instant Payment Notifications) changes the order in your Magento store.
 
-![BitPay Invoice Settings](https://raw.githubusercontent.com/bitpay/magento2-plugin/master/docs/MagentoInvoiceSettings.png "BitPay Invoice Settings")
+![BitPay Invoice Settings](https://raw.githubusercontent.com/bitpay/magento2-plugin/master/docs/Magento2InvoiceSettings.png "BitPay Invoice Settings")
 
 
 ## Usage
