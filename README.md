@@ -7,9 +7,6 @@ If you are interested in becoming a maintainer of this project, please contact u
 
 Bitcoin payment plugin for Magento using the bitpay.com service.
 
-[![Build Status](https://travis-ci.org/bitpay/magento2-plugin.svg?branch=master)](https://travis-ci.org/bitpay/magento2-plugin)
-
-
 ## Quick Start Guide
 
 To get up and running with our plugin quickly, see the GUIDE here: https://github.com/bitpay/magento2-plugin/blob/master/GUIDE.md
