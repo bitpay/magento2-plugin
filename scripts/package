@@ -11,7 +11,7 @@ date_default_timezone_set('America/New_York'); // Main Office is in Eastern Time
 /**
  * Various Configuration Settings
  */
-$version    = '2.1.11';
+$version    = '1.0.0';
 $vendorDir  = __DIR__ . '/../vendor';
 $distDir    = __DIR__ . '/../build/dist';
 $tmpDistDir = $distDir . '/tmp'; // Files will be placed here temporarly so we can zip/tar them.

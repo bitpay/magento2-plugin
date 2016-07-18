@@ -37,7 +37,7 @@ Visit the [Releases](https://github.com/bitpay/magento2-plugin/releases) page of
 3. Run 'php -f bin/magento setup:upgrade' from command line on server
 4. Run 'php -f bin/magento setup:di:compile' from command line on server
 5. In admin interface, go to stores -> configuration -> advanced -> advanced, turn on 'Bitpay_Core'
-6. Then in stores -> configuration -> payment methods, you should have Bitpay as a payment method
+6. Then in stores -> configuration -> sales -> payment methods, you should have Bitpay as a payment method
 
 **NOTE:** These files can also up uploaded using the *Magento Connect Manager* that comes with your Magento Store
 
