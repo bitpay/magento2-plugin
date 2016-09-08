@@ -59,13 +59,13 @@ class Iframe extends \Magento\Framework\View\Element\Template
         $last_success_quote_id = $this->getLastQuoteId();
         $invoiceFactory = $this->_bitpayModel;
         $invoice = $invoiceFactory->load($last_success_quote_id,'quote_id');
-        return $invoice->getData('url').'&view=iframe';
+        return $invoice->getData('url').'&width=700&height=550';
     }
 
     public function getLastQuoteId()
     {
         $objectmanager = \Magento\Framework\App\ObjectManager::getInstance();
-        $quote = $objectmanager->get('\Magento\Checkout\Model\Session');
+        $quote = $objectmanager->create('\Magento\Checkout\Model\Session');
         return $quote->getData('last_success_quote_id');
     }
 
