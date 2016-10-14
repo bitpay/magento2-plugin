@@ -61,4 +61,27 @@ class Iframe extends \Magento\Framework\View\Element\Template {
 		$successUrl = $this->getUrl ( 'checkout/onepage/success' );
 		return $successUrl;
 	}
+	
+	 public function logg($data) {
+    	$writer = new \Zend\Log\Writer\Stream ( BP . '/var/log/payment_bitpay.log' );
+    	$logger = new \Zend\Log\Logger ();
+    	$logger->addWriter ( $writer );
+    	$logger->info ( print_r ( $data, true ) );
+    }
+
+    public function getCartUrl() {
+		$cartUrl = $this->getUrl ( 'checkout/cart/index' );
+		return $cartUrl;
+	}
+
+	public function isTestMode()
+	{
+		return $this->_scopeConfig->getValue('payment/bitpay/fullscreen', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+	}
+	
+	
+	
+	
+	
+	
 }

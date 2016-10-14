@@ -171,6 +171,24 @@ class Bitcoin extends AbstractMethod
      */
     public function authorize(\Magento\Payment\Model\InfoInterface $payment, $amount,$iframe = false)
     {
+        
+        // Check if coming from iframe or submit button
+/**
+        if ((!$this->_scopeConfig->getValue('payment/bitpay/fullscreen') && $iframe === false)
+            || ($this->_scopeConfig->getValue('payment/bitpay/fullscreen') && $iframe === true)) {
+            $quoteId = $payment->getOrder()->getQuoteId();
+            $ipn     = \Magento\Framework\App\ObjectManager::getInstance()->get('\Bitpay\Core\Model\Ipn');
+
+            if (!$ipn->GetQuotePaid($quoteId))
+            {
+                $this->getHelper()->debugData('[ERROR] Order not paid for. Please pay first and then Place Your Order.');
+                // This is the error that is displayed to the customer during checkout.
+                throw new \Magento\Framework\Exception\CouldNotSaveException("Order not paid for.  Please pay first and then Place your Order.");
+                
+            }
+
+            return $this;
+        } */
 
         if (false === isset($payment) || false === isset($amount) || true === empty($payment) || true === empty($amount)) {
             $this->getHelper()->debugData('[ERROR] In \Bitpay\Core\Model\Method\Bitcoin::authorize(): missing payment or amount parameters.');
@@ -208,6 +226,9 @@ class Bitcoin extends AbstractMethod
         
         $order = $payment->getOrder();
 
+        // $mirrorInvoice = $this->invoiceFactory->create()->prepareWithBitpayInvoice($bitpayInvoice,$order)->save();//->prepareWithOrder(array('increment_id' => $order->getIncrementId(), 'quote_id'=> $quote->getId()));//->save();
+        // throw new \Magento\Framework\Exception\LocalizedException("Error Processing Request");
+        // $this->getHelper()->debugData(json_encode($mirrorInvoice->getData()));
         
         if (false === isset($bitpayInvoice) || true === empty($bitpayInvoice)) {
             $this->getHelper()->debugData('[ERROR] In Bitpay_Core_Model_Invoice::prepareWithBitpayInvoice(): Missing or empty $invoice parameter.');
@@ -430,6 +451,8 @@ class Bitcoin extends AbstractMethod
         } else {
             $invoice->setOrderId($quote->getId());
             $invoice->setPosData(json_encode(array('quoteId' => $quote->getId())));
+            // $convertQuote = $this->quoteManagement;//$objectmanager->create('\Magento\Quote\Model\QuoteManagement');
+            // $order = $convertQuote->submit($quote);
         }
         $invoice = $this->addCurrencyInfo($invoice, $order);
         $invoice = $this->addPriceInfo($invoice, $order->getGrandTotal());

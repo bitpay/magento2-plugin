@@ -81,6 +81,15 @@ class ConfigProvider implements \Magento\Checkout\Model\ConfigProviderInterface
 
     public function getConfig()
     {
+       /* $config = [
+            'payment' => [
+                $this->methodCode => [
+                    'fullScreen' => $this->config->getFullscreen(),//$this->getMethodRedirectUrl($this->methodCode)],
+                ],
+            ],
+        ];
+        // $config['payment']['redirectUrl'][$code] = $this->getMethodRedirectUrl($code);
+        // $config['payment']['fullScreen'][$code] = $this->config->getValue('fullscreen');*/
         $config = [];
         return $config;
     }

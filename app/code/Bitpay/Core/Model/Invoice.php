@@ -52,8 +52,8 @@ class Invoice extends \Magento\Framework\Model\AbstractModel
         $objectmanager = \Magento\Framework\App\ObjectManager::getInstance();
         $helper = $objectmanager->get('\Bitpay\Core\Helper\Data');
         if (false === isset($invoice) || true === empty($invoice)) {
-            $helper->debugData('[ERROR] In \Bitpay\Core\Model\Invoice\::prepareWithBitpayInvoice(): Missing or empty $invoice parameter.');
-            throw new \Exception('In \Bitpay\Core\Model\Invoice\::prepareWithBitpayInvoice(): Missing or empty $invoice parameter.');
+            $helper->debugData('[ERROR] In Bitpay_Core_Model_Invoice::prepareWithBitpayInvoice(): Missing or empty $invoice parameter.');
+            throw new \Exception('In Bitpay_Core_Model_Invoice::prepareWithBitpayInvoice(): Missing or empty $invoice parameter.');
         }
         $objectmanager->create('\Bitpay\Core\Model\Invoice')->setData(
             array(
@@ -75,8 +75,8 @@ class Invoice extends \Magento\Framework\Model\AbstractModel
         );
 
         if (false === isset($order) || true === empty($order)) {
-            $helper->debugData('[ERROR] In \Bitpay\Core\Model\Invoice\::prepateWithOrder(): Missing or empty $order parameter.');
-            throw new \Exception('In \Bitpay\Core\Model\Invoice\::prepateWithOrder(): Missing or empty $order parameter.');
+            $helper->debugData('[ERROR] In Bitpay_Core_Model_Invoice::prepateWithOrder(): Missing or empty $order parameter.');
+            throw new \Exception('In Bitpay_Core_Model_Invoice::prepateWithOrder(): Missing or empty $order parameter.');
         }
 
         $this->setData(
@@ -92,15 +92,15 @@ class Invoice extends \Magento\Framework\Model\AbstractModel
      * Adds information to based on the order object inside magento
      *
      * @param Mage_Sales_Model_Order $order
-     * @return \Bitpay\Core\Model\Invoice\
+     * @return Bitpay_Core_Model_Invoice
      */
     public function prepareWithOrder($order)
     {
         $objectmanager = \Magento\Framework\App\ObjectManager::getInstance();
         $helper = $objectmanager->get('\Bitpay\Core\Helper\Data');
         if (false === isset($order) || true === empty($order)) {
-            $helper->debugData('[ERROR] In \Bitpay\Core\Model\Invoice\::prepateWithOrder(): Missing or empty $order parameter.');
-            throw new \Exception('In \Bitpay\Core\Model\Invoice\::prepateWithOrder(): Missing or empty $order parameter.');
+            $helper->debugData('[ERROR] In Bitpay_Core_Model_Invoice::prepateWithOrder(): Missing or empty $order parameter.');
+            throw new \Exception('In Bitpay_Core_Model_Invoice::prepateWithOrder(): Missing or empty $order parameter.');
         }
         
         $this->setData(
