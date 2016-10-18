@@ -74,9 +74,12 @@ class Iframe extends \Magento\Framework\View\Element\Template {
 		return $cartUrl;
 	}
 
-	public function isTestMode()
-	{
-		return $this->_scopeConfig->getValue('payment/bitpay/fullscreen', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+	public function isTestMode() {
+		$mode = $this -> _scopeConfig -> getValue('payment/bitpay/network', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
+		if ($mode == 'testnet') {
+			return true;
+		}
+		return false;
 	}
 	
 	

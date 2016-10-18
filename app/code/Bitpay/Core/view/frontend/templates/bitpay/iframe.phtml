@@ -1,6 +1,6 @@
 <?php
 $url = $block->getFrameActionUrl();
-$isNotTest = $block->isTestMode();
+$isTest = $block->isTestMode();
 $parts = parse_url($url);
 parse_str($parts['query'], $query);
 ?>
@@ -8,8 +8,8 @@ parse_str($parts['query'], $query);
      <script src="https://bitpay.com/bitpay.min.js"></script>
     <script type="text/javascript">
         var id = "<?php echo $query['id']; ?>";
-        <?php if(!$isNotTest): ?>
-        bitpay.enableTestMode();
+        <?php if($isTest): ?>
+          bitpay.enableTestMode();
         <?php endif; ?>
         bitpay.showInvoice(id);
     </script>
