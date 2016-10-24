@@ -1,17 +1,31 @@
-<?php 
-/**
- * @license Copyright 2011-2014 BitPay Inc., MIT License
- * @see https://github.com/bitpay/magento-plugin/blob/master/LICENSE
- */
+<?php
 $url = $block->getFrameActionUrl();
+$isTest = $block->isTestMode();
+$parts = parse_url($url);
+parse_str($parts['query'], $query);
 ?>
 <div class="sm-12">
-    <iframe src="<?php  echo $url; ?>" style="max-width:100%;width:700px; height:550px; overflow:hidden; border:none; margin:auto; display:block;" scrolling="no" allowtransparency="true" frameborder="0"> </iframe><br/>
+     <script src="https://bitpay.com/bitpay.min.js"></script>
+    <script type="text/javascript">
+        var id = "<?php echo $query['id']; ?>";
+        <?php if($isTest): ?>
+          bitpay.enableTestMode();
+        <?php endif; ?>
+        bitpay.showInvoice(id);
+    </script>
+    <?php /*<iframe src="<?php  echo $url; ?>" style="width:500px; height:600px; overflow:hidden; border:none; margin:auto; display:block;" scrolling="no" allowtransparency="true" frameborder="0"> </iframe> */ ?><br/>
 </div>
 <?php     
 $quoteId = $block->getLastQuoteId();
 $check_url     = $block->getValidateUrl();
+$cart_url     = $block->getCartUrl();
+$succ_url = $block->getSuccessUrl()
 ?>
+
+<?php $loader = $this->getViewFileUrl('images/loader-1.gif');?>
+<div class="custom_loader" style="top: 0px; right: 0px; bottom: 0px; left: 0px; margin: auto; height: 100px; width: 100px;"><img alt="Loading..." src="<?php echo $loader;?>"><p>Please wait...</p></div>
+
+
 <div class="actions-toolbar" id="order-button" style="display: none;width:130px;margin: 0 auto;">
     <div class="primary">
         <a class="action primary continue" id="bitpayButton" href="<?php /* @escapeNotVerified */ echo $block->getSuccessUrl() ?>"><span><?php /* @escapeNotVerified */ echo __('Place Order') ?></span></a>
@@ -20,21 +34,40 @@ $check_url     = $block->getValidateUrl();
 <script type="text/javascript">
 //<![CDATA[
  require(['jquery'], function () {
-    jQuery( document ).ready(function() {
-        window.setInterval(function(){
+    jQuery( document ).ready(function() {    	
+    //    window.setInterval(function(){
+  //          jQuery.ajax( {
+//                url: '<?php //echo $check_url; ?>',
+          //      data: {quote: <?php //echo $quoteId; ?>},
+        //        type: 'GET'
+      //      }).done(function(a) { 
+    //            if(a.paid){
+  //                  document.getElementById('order-button').style.display = 'block';
+//                } else {
+                //    console.log('<?php //echo __('Not Paid.'); ?>');
+              //  }
+            //});
+          //  return false;
+        //}, 5000); 
+
+bitpay.onModalWillEnter(function() {
+              jQuery('.custom_loader').hide();              
+        });
+        bitpay.onModalWillLeave(function() {
+            jQuery('.custom_loader').show();
             jQuery.ajax( {
                 url: '<?php echo $check_url; ?>',
                 data: {quote: <?php echo $quoteId; ?>},
                 type: 'GET'
+          //      showLoader: true
             }).done(function(a) { 
                 if(a.paid){
-                    document.getElementById('order-button').style.display = 'block';
+                    window.location.href = "<?php echo $succ_url; ?>";
                 } else {
-                    console.log('<?php echo __('Not Paid.'); ?>');
+                    window.location.href = "<?php echo $cart_url; ?>";
                 }
             });
-            return false;
-        }, 5000);
+        });
     });
  });
 //]]>

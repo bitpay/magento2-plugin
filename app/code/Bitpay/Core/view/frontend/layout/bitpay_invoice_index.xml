@@ -11,7 +11,7 @@
 	        <title>Pay with BitCoin</title>
 	    </head>
         <referenceContainer name="content">
-            <block name="bitpay.iframe" class="\Bitpay\Core\Block\Iframe" template="Bitpay_Core::bitpay/iframe.phtml" />
+            <block name="bitpay.iframe" class="\Bitpay\Core\Block\Iframe" template="Bitpay_Core::bitpay/iframe.phtml" cacheable="false"/>
         </referenceContainer>
     </body>
 </page>
