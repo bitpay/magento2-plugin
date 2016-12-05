@@ -51,34 +51,40 @@ class Ipn extends \Magento\Framework\Model\AbstractModel
      *
      * @return boolean
      */
-    function GetStatusReceived($quoteId, $statuses)
-    {
+    function GetStatusReceived($quoteId, $statuses) {
         $objectmanager = \Magento\Framework\App\ObjectManager::getInstance();
-        if (!$quoteId)
-        {
-            return false;
-        }
-        $quote_model = $objectmanager->get('\Magento\Quote\Model\Quote');
-        $quote = $quote_model->load($quoteId, 'entity_id');
-        if (!$quote)
-        {
-            $objectmanager->get('\Bitpay\Core\Helper\Data')->debugData('[ERROR] quote not found.');
+        if (!$quoteId) {
             return false;
         }
 
-        $collection = $this->_ipnCollectionFactory->load();//$objectmanager->create('\Bitpay\Core\Model\Ipn')->getCollection();
+        $order = $objectmanager -> get('\Magento\Sales\Model\Order') -> load($quoteId, 'quote_id');
+        if (!$order) {
+            $objectmanager -> get('\Bitpay\Core\Helper\Data') -> debugData('[DEBUG] Bitpay_Core_Model_Ipn::GetStatusReceived(), order not found for quoteId');
+            return false;
+        }
 
-        foreach ($collection as $i)
-        {
-            $postData = json_decode($i->getData('pos_data'), true);
-            if (isset($postData['quoteId']) && $quoteId == $postData['quoteId']) {
-                if (in_array($i->getData('status'), $statuses)) {
+        $orderIncrementId = $order -> getIncrementId();
+
+        if (false === isset($orderIncrementId) || true === empty($orderIncrementId)) {
+            $objectmanager -> get('\Bitpay\Core\Helper\Data') -> debugData('[DEBUG] Bitpay_Core_Model_Ipn::GetStatusReceived(), orderId not found for quoteId' . $orderIncrementId);
+            return false;
+        }
+        $collection = $objectmanager->create('\Bitpay\Core\Model\Ipn')->getCollection();//$this -> _ipnCollectionFactory -> load();
+        
+        foreach ($collection as $i) {
+            $pos=json_decode($i -> getPosData(), true);
+            if(!isset($pos['orderId'])){
+            continue;
+            }
+            if ($orderIncrementId == $pos['orderId']) {
+                if (in_array($i -> getData('status'), $statuses)) {
                     return true;
                 }
             }
         }
-        return false;       
+        return false;
     }
+
 
     /**
      * @param string $quoteId
