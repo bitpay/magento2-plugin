@@ -445,15 +445,10 @@ class Bitcoin extends AbstractMethod
         $quote = $objectmanager->create('\Magento\Quote\Model\Quote')->load($quote_session->getId());
         $order = $payment->getOrder();
 
-        if ($this->_scopeConfig->getValue('payment/bitpay/fullscreen')) {
-            $invoice->setOrderId($order->getIncrementId());
-            $invoice->setPosData(json_encode(array('orderId' => $order->getIncrementId())));
-        } else {
-            $invoice->setOrderId($quote->getId());
-            $invoice->setPosData(json_encode(array('quoteId' => $quote->getId())));
-            // $convertQuote = $this->quoteManagement;//$objectmanager->create('\Magento\Quote\Model\QuoteManagement');
-            // $order = $convertQuote->submit($quote);
-        }
+        //Passing Order Ids
+        $invoice->setOrderId($order->getIncrementId());
+        $invoice->setPosData(json_encode(array('orderId' => $order->getIncrementId())));
+        
         $invoice = $this->addCurrencyInfo($invoice, $order);
         $invoice = $this->addPriceInfo($invoice, $order->getGrandTotal());
         $invoice = $this->addBuyerInfo($invoice, $order);
