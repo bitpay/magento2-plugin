@@ -1,21 +1,21 @@
 # Using the BitPay plugin for Magento
 
 ## Prerequisites
-You must have a BitPay merchant account to use this plugin.  It's free to [sign-up for a BitPay merchant account](https://bitpay.com/start).
+You must have a BitPay business account to use this plugin.  It's free to [sign-up for a BitPay business account](https://bitpay.com/start).
 
 
 ## Server Requirements
 
-* Last Cart Version Tested: 2.0.5
-* [Magento CE](http://magento.com/resources/system-requirements) 2.0.0 or higher. Older versions might work, however this plugin has been validated to work against the 2.0.5 Community Edition release.
+* Last Cart Version Tested: 2.1.2
+* [Magento CE](http://magento.com/resources/system-requirements) 2.0.0 or higher. Older versions might work, however this plugin has been validated to work against the 2.1.2 Community Edition release.
 * [GMP](http://us2.php.net/gmp) or [BC Math](http://us2.php.net/manual/en/book.bc.php) PHP extensions.  GMP is preferred for performance reasons but you may have to install this as most servers do not come with it installed by default.  BC Math is commonly installed however and the plugin will fall back to this method if GMP is not found.
 * [OpenSSL](http://us2.php.net/openssl) Must be compiled with PHP and is used for certain cryptographic operations.
-* [PHP](http://us2.php.net/downloads.php) 5.4 or higher. This plugin will not work on PHP 5.3 and below. This plugin was tested with PHP 5.5.35
+* [PHP](http://us2.php.net/downloads.php) 5.4 or higher. This plugin will not work on PHP 5.3 and below. This plugin was tested with PHP 5.6 and PHP 7.0
 
 
 ## Installation
 
-**From the Magento Connect Manager:**
+**From the Magento Marketplace:**
 
 Goto [http://www.magentocommerce.com/magento-connect/bitpay-payment-method.html](http://www.magentocommerce.com/magento-connect/bitpay-payment-method.html) and click the *Install Now* link which will give you the *Extension Key* needed for the next step.
 
@@ -39,7 +39,7 @@ Visit the [Releases](https://github.com/bitpay/magento2-plugin/releases) page of
 5. In admin interface, go to stores -> configuration -> advanced -> advanced, turn on 'Bitpay_Core'
 6. Then in stores -> configuration -> sales -> payment methods, you should have Bitpay as a payment method
 
-**NOTE:** These files can also up uploaded using the *Magento Connect Manager* that comes with your Magento Store
+**NOTE:** These files can also up uploaded using the *Magento Marketplace* that comes with your Magento Store
 
 **WARNING:** It is good practice to backup your database before installing extensions. Please make sure you Create Backups.
 
