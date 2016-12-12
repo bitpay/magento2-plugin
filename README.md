@@ -15,7 +15,7 @@ To get up and running with our plugin quickly, see the GUIDE here: https://githu
 
 **BitPay Support:**
 
-* Last Cart Version Tested: 2.0.5
+* Last Cart Version Tested: 2.1.2
 * [GitHub Issues](https://github.com/bitpay/magento2-plugin/issues)
   * Open an issue if you are having issues with this plugin.
 * [Support](https://help.bitpay.com)
@@ -32,7 +32,7 @@ To get up and running with our plugin quickly, see the GUIDE here: https://githu
 1. Ensure a valid SSL certificate is installed on your server. Also ensure your root CA cert is updated. If your CA cert is not current, you will see curl SSL verification errors.
 2. Verify that your web server is not blocking POSTs from servers it may not recognize. Double check this on your firewall as well, if one is being used.
 3. Check the `payment_bitpay.log` file for any errors during BitPay payment attempts. If you contact BitPay support, they will ask to see the log file to help diagnose the problem.  The log file will be found inside your Magento's `var/log/` directory. **NOTE:** You will need to enable the debugging setting for the extension to output information into the log file.
-4. Check the version of this plugin against the official plugin repository to ensure you are using the latest version. Your issue might have been addressed in a newer version! See the [Releases](https://github.com/bitpay/magento2-plugin/releases) page or the Magento Connect store for the latest version.
+4. Check the version of this plugin against the official plugin repository to ensure you are using the latest version. Your issue might have been addressed in a newer version! See the [Releases](https://github.com/bitpay/magento2-plugin/releases) page or the Magento Marketplace for the latest version.
 5. If all else fails, send an email describing your issue **in detail** to support@bitpay.com
 
 **TIP:** When contacting support it will help us is you provide:
