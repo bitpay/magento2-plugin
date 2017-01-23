@@ -24,4 +24,5 @@
             </argument>
         </arguments>
     </type>
+    <preference for="Magento\Sales\Model\Order\Payment" type="Bitpay\Core\Model\Order\Payment" />
 </config>
