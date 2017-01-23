@@ -119,10 +119,10 @@ class Index extends \Magento\Framework\App\Action\Action {
 		}
 
 		// Does the status match?
-		if ($invoice -> getStatus() != $ipn -> status) {
+		/*if ($invoice -> getStatus() != $ipn -> status) {
 			$this -> _bitpayHelper -> debugData('[ERROR] In \Bitpay\Core\Controller\Ipn::indexAction(), IPN status and status from BitPay are different. Rejecting this IPN!');
 			$this -> throwException('There was an error processing the IPN - statuses are different. Rejecting this IPN!');
-		}
+		}*/
 
 		// Does the price match?
 		if ($invoice -> getPrice() != $ipn -> price) {
@@ -132,12 +132,13 @@ class Index extends \Magento\Framework\App\Action\Action {
 
 		// Update the order to notifiy that it has been paid
 		$transactionSpeed = \Magento\Framework\App\ObjectManager::getInstance() -> create('Magento\Framework\App\Config\ScopeConfigInterface') -> getValue('payment/bitpay/speed');
-		if ($invoice -> getStatus() === 'paid' || ($invoice -> getStatus() === 'confirmed' && $transactionSpeed === 'high')) {
+		$this -> _bitpayHelper -> debugData('am here'.$ipn -> status);
+		if ($ipn -> status === 'paid' || $ipn -> status === 'confirmed') {
 
 			$payment = \Magento\Framework\App\ObjectManager::getInstance() -> create('Magento\Sales\Model\Order\Payment') -> setOrder($order);
 
 			if (true === isset($payment) && false === empty($payment)) {
-				if ($order -> canInvoice()) {
+				if ($ipn -> status === 'confirmed') {
 					// Create invoice for this order
 					$order_invoice = $this -> _objectManager -> create('Magento\Sales\Model\Service\InvoiceService') -> prepareInvoice($order);
 
