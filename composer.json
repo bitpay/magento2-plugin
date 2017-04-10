@@ -44,5 +44,11 @@
             "build/",
             "build.xml"
         ]
+    },
+    "autoload": {
+        "files": [ "registration.php" ],
+        "psr-4": {
+          "Bitpay\\Core\\": ""
+        }
     }
 }
