@@ -5,6 +5,7 @@
  */
 namespace Bitpay\Core\Helper;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
 
 class Data extends \Magento\Framework\App\Helper\AbstractHelper
 {
@@ -230,7 +231,7 @@ class Data extends \Magento\Framework\App\Helper\AbstractHelper
             throw new \Exception('In \Bitpay\Core\Helper\Data::sendPairingRequest(): could not create new Mage_Core_Model_Config object. Cannot continue!');
         }
 
-        if($config->saveConfig('payment/bitpay/token', $token->getToken(), $store->getStore()->getCode(), 0)) {
+        if($config->saveConfig('payment/bitpay/token', $token->getToken(), ScopeConfigInterface::SCOPE_TYPE_DEFAULT, 0)) {
             $this->debugData('[INFO] In \Bitpay\Core\Helper\Data::sendPairingRequest(): token saved to database.');
         } else {
             $this->debugData('[ERROR] In \Bitpay\Core\Helper\Data::sendPairingRequest(): token could not be saved to database.');
