@@ -1,6 +1,8 @@
 <?php
 namespace Bitpay\Core\Model;
 
+use Magento\Framework\App\Config\ScopeConfigInterface;
+
 class MagentoStorage implements \Bitpay\Storage\StorageInterface {
 	/**
 	 * @var array
@@ -17,13 +19,12 @@ class MagentoStorage implements \Bitpay\Storage\StorageInterface {
 
 		$encryptedData = \Magento\Framework\App\ObjectManager::getInstance() -> get('\Magento\Framework\Encryption\EncryptorInterface') -> encrypt($data);
 		$config = \Magento\Framework\App\ObjectManager::getInstance() -> get('\Magento\Config\Model\ResourceModel\Config');
-		$store = \Magento\Framework\App\ObjectManager::getInstance() -> get('\Magento\Store\Model\StoreManagerInterface');
 		$helper = \Magento\Framework\App\ObjectManager::getInstance() -> get('\Bitpay\Core\Helper\Data');
 
 		if (true === isset($config) && false === empty($config)) {
-			$config -> saveConfig($key -> getId(), $encryptedData, $store -> getStore() -> getCode(), 0);
+			$config->saveConfig($key -> getId(), $encryptedData, ScopeConfigInterface::SCOPE_TYPE_DEFAULT, 0);
 		} else {
-			$helper -> debugData('[ERROR] In file lib/Bitpay/Storage/MagentoStorage.php, class MagentoStorage::persist - Could not instantiate a \Mage_Core_Model_Config object.');
+			$helper->debugData('[ERROR] In file lib/Bitpay/Storage/MagentoStorage.php, class MagentoStorage::persist - Could not instantiate a \Mage_Core_Model_Config object.');
 			throw new \Exception('[ERROR] In file lib/Bitpay/Storage/MagentoStorage.php, class MagentoStorage::persist - Could not instantiate a \Mage_Core_Model_Config object.');
 		}
 	}
