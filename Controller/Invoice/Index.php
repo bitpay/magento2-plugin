@@ -54,7 +54,7 @@ class Index extends \Magento\Framework\App\Action\Action {
 			return $resultRedirect;
 		} else {
 			$resultPage = $this->resultPageFactory->create ();
-			$resultPage->getConfig ()->getTitle ()->set ( __ ( 'Pay with BitCoin' ) );
+			$resultPage->getConfig ()->getTitle ()->set ( __ ( 'Pay with Bitcoin' ) );
 			return $resultPage;
 		}
 	}
