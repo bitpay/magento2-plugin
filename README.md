@@ -15,7 +15,7 @@ To get up and running with our plugin quickly, see the GUIDE here: https://githu
 
 **BitPay Support:**
 
-* Last Cart Version Tested: 2.1.2
+* Last Cart Version Tested: 2.1.8
 * [GitHub Issues](https://github.com/bitpay/magento2-plugin/issues)
   * Open an issue if you are having issues with this plugin.
 * [Support](https://help.bitpay.com)

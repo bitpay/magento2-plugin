@@ -8,7 +8,7 @@ This plugin can be used in Production mode and in Test mode. For more informatio
 
 ## Server Requirements
 
-* Last Cart Version Tested: 2.1.2
+* Last Cart Version Tested: 2.1.8
 * [Magento CE](http://magento.com/resources/system-requirements) 2.0.0 or higher. Older versions might work, however this plugin has been validated to work against the 2.1.2 Community Edition release.
 * [GMP](http://us2.php.net/gmp) or [BC Math](http://us2.php.net/manual/en/book.bc.php) PHP extensions.  GMP is preferred for performance reasons but you may have to install this as most servers do not come with it installed by default.  BC Math is commonly installed however and the plugin will fall back to this method if GMP is not found.
 * [OpenSSL](http://us2.php.net/openssl) Must be compiled with PHP and is used for certain cryptographic operations.
