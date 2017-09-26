@@ -1,54 +1,20 @@
 {
-    "name": "bitpay/magento2-plugin",
-    "description": "Bitcoin payment module using the bitpay.com service",
-    "keywords": ["magento2", "magento","bitcoin"],
-    "minimum-stability": "stable",
-    "type": "magento2-plugin",
-    "homepage": "https://github.com/bitpay/magento2-plugin",
-    "license": "MIT",
-    "support": {
-        "email": "support@bitpay.com",
-        "issues": "https://github.com/bitpay/magento2-plugin/issues",
-        "source": "https://github.com/bitpay/magento2-plugin"
-    },
-    "require": {
-        "composer/installers": "~1.0",
-        "bitpay/php-client": "dev-master#9027ce67e4b28516ff1ebd1046bdd15c37a7a59f"
-    },
-    "require-dev": {
-        "symfony/finder": "~2.3",
-        "symfony/process": "~2.3",
-        "phpmd/phpmd": "~2.1",
-        "phpdocumentor/phpdocumentor": "~2.7",
-        "daedalus/daedalus": "~1.0@dev",
-        "pdepend/pdepend" : "~2.0",
-        "squizlabs/php_codesniffer": "~1.5",
-        "phpunit/phpunit": "~3.7",
-        "phploc/phploc": "~2.0",
-        "fzaninotto/faker": "~1.3"
-    },
-    "config": {
-        "bin-dir": "bin"
-    },
-    "extra": {
-        "branch-alias": {
-            "dev-master": "2.2.x-dev"
-        }
-    },
-    "archive": {
-        "exclude": [
-            "tests/",
-            ".gitattributes",
-            ".gitignore",
-            ".travis.yml",
-            "build/",
-            "build.xml"
-        ]
-    },
-    "autoload": {
-        "files": [ "registration.php" ],
-        "psr-4": {
-          "Bitpay\\Core\\": ""
-        }
+  "name": "bitpay/magento2-plugin",
+  "description": "Bitcoin payment plugin for Magento using the bitpay.com service.",
+  "type": "magento2-module",
+  "version": "1.0.0",
+  "license": [ "OSL-3.0","AFL-3.0"],
+  "require": {
+    "php": "~5.5.0|~5.6.0|~7.0.0",
+    "bitpay/php-client": "~2.2",
+    "symfony/filesystem": "~2.3||~3",
+    "symfony/finder": "~2.3||~3"
+  },
+  "autoload": {
+    "files": [ "registration.php" ],
+    "psr-4": {
+      "Bitpay\\Core\\": ""
     }
+  }
 }
+

@@ -11,12 +11,14 @@ date_default_timezone_set('America/New_York'); // Main Office is in Eastern Time
 /**
  * Various Configuration Settings
  */
-$version    = '1.0.0';
+$version    = '1.0.8';
 $vendorDir  = __DIR__ . '/../vendor';
+$magentoDir  = __DIR__ . '/../framework/vendor';
 $distDir    = __DIR__ . '/../build/dist';
 $tmpDistDir = $distDir . '/tmp'; // Files will be placed here temporarly so we can zip/tar them.
 $distFile   = $distDir . '/Bitpay_Core-'.$version; // Without extension
 
+require_once $magentoDir . '/autoload.php';
 require_once $vendorDir . '/autoload.php';
 
 $filesystem = new \Symfony\Component\Filesystem\Filesystem();
@@ -24,14 +26,18 @@ $filesystem = new \Symfony\Component\Filesystem\Filesystem();
 /**
  * Copy all required files to temp. distribution directory
  */
+
+// start with BitPay's PHP library
 $finder = new \Symfony\Component\Finder\Finder();
 $finder
     ->files()
     ->in($vendorDir . '/bitpay/php-client/src')
     ->exclude('Tests');
 
+// Find vendor libs 
 foreach ($finder as $file) {
     $path = $file->getRelativePathname();
+    // Create the lib directory in the tmp dir
     $filesystem->mkdir(
         sprintf(
             '%s/lib/internal/%s',
@@ -49,10 +55,50 @@ foreach ($finder as $file) {
         true
     );
 }
-$filesystem->mirror('app/', sprintf('%s/app/', $tmpDistDir));
-$filesystem->mirror('lib/', sprintf('%s/lib/', $tmpDistDir));
-$filesystem->copy('LICENSE', sprintf('%s/app/code/Bitpay/Core/LICENSE', $tmpDistDir));
-$filesystem->copy('README.md', sprintf('%s/app/code/Bitpay/Core/README.md', $tmpDistDir));
+#$filesystem->mirror('lib/', sprintf('%s/lib/', $tmpDistDir));
+
+// Now find the actual BitPay magento plugin files
+$finder = new \Symfony\Component\Finder\Finder();
+$finder
+    ->files()
+    ->in(__DIR__.'/..')
+    ->exclude('Build')
+    ->exclude('build')
+    ->exclude('build.xml')
+    ->exclude('docs')
+    ->exclude('framework')
+    ->exclude('GUIDE.md')
+    ->exclude('framework')
+    ->exclude('modman')
+    ->exclude('scripts')
+    ->exclude('tests')
+    ->exclude('vendor');
+
+// Find all required BitPay magento Core plugin files
+foreach ($finder as $file) {
+    $path = $file->getRelativePathname();
+    // Create the app directory in the tmp dir
+    $filesystem->mkdir(
+        sprintf(
+            '%s/app/Code/Bitpay/Core/%s',
+            $tmpDistDir,
+            dirname($file->getRelativePathname())
+        )
+    );
+    $filesystem->copy(
+        $file->getRealPath(),
+        sprintf(
+            '%s/app/Code/Bitpay/Core/%s',
+            $tmpDistDir,
+            $file->getRelativePathname()
+        ),
+        true
+    );
+}
+#$filesystem->mirror('app/', sprintf('%s/app/', $tmpDistDir));
+
+//$filesystem->copy('LICENSE', sprintf('%s/app/code/Bitpay/Core/LICENSE', $tmpDistDir));
+//$filesystem->copy('README.md', sprintf('%s/app/code/Bitpay/Core/README.md', $tmpDistDir));
 
 // All required files are in the temp. distribution directory
 
@@ -95,7 +141,7 @@ $xml->addChild('dependencies');
 
 $requiredNode = $xml->addChild('required', 'php');
 $requiredNode->addAttribute('php_min', '5.4.0');
-$requiredNode->addAttribute('php_max', '6.0.0');
+$requiredNode->addAttribute('php_max', '7');
 
 $extensionsNode = $xml->addChild('extensions');
 
@@ -145,6 +191,13 @@ $process = new \Symfony\Component\Process\Process(
 );
 
 $process->run();
+
+$process = new \Symfony\Component\Process\Process(
+    sprintf('cd %s; zip -r %s *', $tmpDistDir, $distFile.'.zip')
+);
+
+$process->run();
+
 
 // Cleanup
 $filesystem->remove($tmpDistDir);
