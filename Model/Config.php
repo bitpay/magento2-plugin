@@ -6,106 +6,109 @@
 
 namespace Bitpay\Core\Model;
 
-use Magento\Payment\Model\Method\AbstractMethod;
-use Magento\Store\Model\ScopeInterface;
+use Magento\Payment\Gateway\Config\Config as BaseConfig;
 
-class Config
-{
-
-     /**
-     * @var array
-     */
-    protected $_methods;
+class Config extends BaseConfig {
 
     /**
-     * Core store config
+     * Determines if the gateway is active.
      *
-     * @var \Magento\Framework\App\Config\ScopeConfigInterface
+     * @return bool
      */
-    protected $_scopeConfig;
-
-    /**
-     * @var \Magento\Framework\Config\DataInterface
-     */
-    protected $_dataStorage;
-
-    /**
-     * Locale model
-     *
-     * @var \Magento\Framework\Locale\ResolverInterface
-     */
-    protected $localeResolver;
-
-    /**
-     * Payment method factory
-     *
-     * @var \Magento\Payment\Model\Method\Factory
-     */
-    protected $_paymentMethodFactory;
-
-    /**
-     * DateTime
-     *
-     * @var \Magento\Framework\Stdlib\DateTime\DateTime
-     */
-    protected $_date;
-
-    /**
-     * Construct
-     *
-     * @param \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig
-     * @param \Magento\Payment\Model\Method\Factory $paymentMethodFactory
-     * @param \Magento\Framework\Locale\ResolverInterface $localeResolver
-     * @param \Magento\Framework\Config\DataInterface $dataStorage
-     * @param \Magento\Framework\Stdlib\DateTime\DateTime $date
-     */
-    public function __construct(
-        \Magento\Framework\App\Config\ScopeConfigInterface $scopeConfig,
-        \Magento\Payment\Model\Method\Factory $paymentMethodFactory,
-        \Magento\Framework\Locale\ResolverInterface $localeResolver,
-        \Magento\Framework\Config\DataInterface $dataStorage,
-        \Magento\Framework\Stdlib\DateTime\DateTime $date
-    ) {
-        $this->_scopeConfig = $scopeConfig;
-        $this->_dataStorage = $dataStorage;
-        $this->_paymentMethodFactory = $paymentMethodFactory;
-        $this->localeResolver = $localeResolver;
-        $this->_date = $date;
-    }
-
-
-    /**
-     * Retrieve active system payments
-     *
-     * @return array
-     * @api
-     */
-    public function getActiveMethods()
-    {
-        $methods = [];
-        if (isset($data['active'], $data['model']) && (bool)$data['active']) {
-            /** @var MethodInterface $methodModel Actually it's wrong interface */
-            $methodModel = $this->_paymentMethodFactory->create($data['model']);
-            $methodModel->setId($code);
-            $methodModel->setStore(null);
-            if ($methodModel->getConfigData('active', null)) {
-                $methods[$code] = $methodModel;
-            }
-        }
-        return $methods;
+    public function isActive() {
+        return (bool) $this->getValue('active');
     }
 
     /**
-     * Retrieve array of payment methods information
+     * Determines if the gateway has debug mode.
      *
-     * @return array
-     * @api
+     * @return bool
      */
-    public function getMethodsInfo()
-    {
-        return $this->_dataStorage->get('methods');
+    public function isDebug() {
+        return (bool) $this->getValue('debug');
     }
 
-    
+    /**
+     * Returns Transaction Speed value.
+     *
+     * @return string
+     */
+    public function getTransactionSpeed() {
+        return $this->getValue('speed');
+    }
+
+    /**
+     * Returns true if Transaction Speed has been configured
+     *
+     * @return boolean
+     */
+    public function hasTransactionSpeed() {
+        $speed = $this->getTransactionSpeed();
+
+        return !empty($speed);
+    }
+
+    /**
+     * Returns the network name.
+     *
+     * @return mixed
+     */
+    public function getNetwork() {
+        return $this->getValue('network');
+    }
+
+    /**
+     * Returns the token.
+     *
+     * @return string
+     */
+    public function getToken() {
+        return (string) $this->getValue('token');
+    }
+
+    /**
+     * Determines if the full screen option is enabled.
+     *
+     * @return bool
+     */
+    public function isFullScreen() {
+        return (bool) $this->getValue('fullscreen');
+    }
+
+    /**
+     * Determines if the Network is Testnet.
+     *
+     * @return bool
+     */
+    public function isTestnetNetwork() {
+        return $this->getNetwork() === 'testnet';
+    }
+
+    /**
+     * Determines if the Network is Livenet.
+     *
+     * @return bool
+     */
+    public function isLivenetNetwork() {
+        return $this->getNetwork() === 'livenet';
+    }
+
+    /**
+     * Returns the URL where the IPN's are sent
+     *
+     * @return string
+     */
+    public function getNotificationUrl() {
+        return (string) $this->getValue('notification_url');
+    }
+
+    /**
+     * Returns the URL where customers are redirected
+     *
+     * @return string
+     */
+    public function getRedirectUrl() {
+        return (string) $this->getValue('redirect_url');
+    }
 
 }

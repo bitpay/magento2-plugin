@@ -27,7 +27,7 @@
                                                                     <item name="component" xsi:type="string">Bitpay_Core/js/view/payment/bitpay</item>
                                                                     <item name="methods" xsi:type="array">
                                                                         <item name="bitpay" xsi:type="array">
-                                                                            
+
                                                                         </item>
                                                                     </item>
                                                                 </item>

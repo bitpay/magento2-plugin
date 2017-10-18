@@ -3,15 +3,21 @@
   "description": "Bitcoin payment plugin for Magento using the bitpay.com service.",
   "type": "magento2-module",
   "version": "1.0.0",
-  "license": [ "OSL-3.0","AFL-3.0"],
+  "license": [
+    "OSL-3.0",
+    "AFL-3.0"
+  ],
   "require": {
     "php": "~5.5.0|~5.6.0|~7.0.0",
     "bitpay/php-client": "~2.2",
     "symfony/filesystem": "~2.3||~3",
-    "symfony/finder": "~2.3||~3"
+    "symfony/finder": "~2.3||~3",
+    "magento/magento-composer-installer": "*"
   },
   "autoload": {
-    "files": [ "registration.php" ],
+    "files": [
+      "registration.php"
+    ],
     "psr-4": {
       "Bitpay\\Core\\": ""
     }

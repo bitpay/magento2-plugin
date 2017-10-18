@@ -3,7 +3,10 @@
  * Copyright © 2015 Magento. All rights reserved.
  * See COPYING.txt for license details.
  */
+
 namespace Bitpay\Core\Block;
+
+use Magento\Framework\App\ObjectManager;
 
 /**
  * Base payment iformation block
@@ -18,26 +21,31 @@ class Info extends \Magento\Payment\Block\Info
 
     public function getBitpayInvoiceUrl()
     {
-        $order       = $this->getInfo()->getOrder();
-        $bitpayHelper = \Magento\Framework\App\ObjectManager::getInstance()->get('\Bitpay\Core\Helper\Data');
-        $bitpayModelInvoice = \Magento\Framework\App\ObjectManager::getInstance()->get('\Bitpay\Core\Model\Invoice');
+        /* @var $helper \Bitpay\Core\Helper\Data */
+        /* @var $invoice \Bitpay\Core\Model\Invoice */
+        /* @var $order \Magento\Sales\Model\Order */
+
+        $objectManager  = ObjectManager::getInstance();
+        $order          = $this->getInfo()->getOrder();
+        $helper         = $objectManager->get('\Bitpay\Core\Helper\Data');
+        $invoice        = $objectManager->get('\Bitpay\Core\Model\Invoice');
 
         if (false === isset($order) || true === empty($order)) {
-            $bitpayHelper->debugData('[ERROR] In Bitpay\Core\Block\Info::getBitpayInvoiceUrl(): could not obtain the order.');
-            throw new \Exception('In Bitpay\Core\Block\Info::getBitpayInvoiceUrl(): could not obtain the order.');
+            $message = $helper->logError('Could not obtain the order.', __METHOD__);
+            throw new \Exception($message);
         }
 
         $incrementId = $order->getIncrementId();
 
         if (false === isset($incrementId) || true === empty($incrementId)) {
-            $bitpayHelper->debugData('[ERROR] In Bitpay\Core\Block\Info::getBitpayInvoiceUrl(): could not obtain the incrementId.');
-            throw new \Exception('In Bitpay\Core\Block\Info::getBitpayInvoiceUrl(): could not obtain the incrementId.');
+            $message = $helper->logError('Could not obtain the incrementId.', __METHOD__);
+            throw new \Exception($message);
         }
 
-        $bitpayInvoice = $bitpayModelInvoice->load($incrementId, 'increment_id');
+        $invoice = $invoice->load($incrementId, 'increment_id');
 
-        if (true === isset($bitpayInvoice) && false === empty($bitpayInvoice)) {
-            return $bitpayInvoice->getUrl();
+        if (true === isset($invoice) && false === empty($invoice)) {
+            return $invoice->getUrl();
         }
     }
     

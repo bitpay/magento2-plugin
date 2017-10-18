@@ -5,14 +5,14 @@
  */
 
 /**
+ * @var $block \Bitpay\Core\Block\Form\Bitpay
  * @see Bitpay\Core\Block\Form\Bitpay
  */
- 
-$_code = $block->getMethodCode();
-$bitpayScope = \Magento\Framework\App\ObjectManager::getInstance()->get('\Magento\Framework\App\Config\ScopeConfigInterface');
-if ($bitpayScope->getValue('payment/bitpay/fullscreen')) {
-	echo '<ul class="form-list" id="payment_form_' . $_code . '" style="display:none;">' .
-	         '<li>You will be transfered to <a href="https://bitpay.com" target="_blank">BitPay</a> to complete your purchase when using this payment method.</li>' .
+
+if ($block->getHelper()->isFullScreen()) {
+	echo '<ul class="form-list" id="payment_form_' . $block->getMethodCode() . '" style="display:none;">' .
+	         '<li>You will be transferred to <a href="https://bitpay.com" target="_blank">BitPay</a> to complete your purchase when using this payment method.</li>' .
 	     '</ul>';
 }
+
 ?>

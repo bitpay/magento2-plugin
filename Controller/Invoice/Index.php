@@ -6,55 +6,86 @@
  */
 namespace Bitpay\Core\Controller\Invoice;
 
+use Bitpay\Core\Helper\Data;
+use Bitpay\Core\Model\Invoice;
+use Magento\Framework\App\Action\Action;
 use Magento\Framework\App\Action\Context;
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Controller\ResultFactory;
+use Magento\Framework\Registry;
+use Magento\Framework\View\Result\PageFactory;
 
 /**
  * @route bitpay/invoice/
  */
-class Index extends \Magento\Framework\App\Action\Action {
-	protected $_bitpayHelper;
-	protected $_bitpayModel;
-	protected $_checkoutSession;
-	/**
-	 * Core registry
-	 *
-	 * @var \Magento\Framework\Registry
-	 */
+class Index extends Action {
+
+    /**
+     * @var Data
+     */
+	protected $helper;
+
+    /**
+     * @var Invoice
+     */
+	protected $invoiceFactory;
+
+    /**
+     * @var Registry
+     */
 	protected $_coreRegistry;
-	protected $configResource;
+
+    /**
+     * @var PageFactory
+     */
 	protected $resultPageFactory;
-	public function __construct(\Magento\Framework\App\Action\Context $context, \Magento\Framework\Registry $coreRegistry, \Bitpay\Core\Helper\Data $_bitpayHelper, \Bitpay\Core\Model\Invoice $_bitpayModel, \Magento\Framework\App\Config\MutableScopeConfigInterface $config, \Magento\Framework\View\Result\PageFactory $resultPageFactory) {
+
+    /**
+     * Index constructor.
+     * @param Context $context
+     * @param Registry $coreRegistry
+     * @param Data $helper
+     * @param Invoice $invoiceFactory
+     * @param PageFactory $resultPageFactory
+     */
+	public function __construct(Context $context, Registry $coreRegistry, Data $helper, Invoice $invoiceFactory, PageFactory $resultPageFactory) {
+        parent::__construct($context);
+
 		$this->_coreRegistry = $coreRegistry;
-		$this->_bitpayHelper = $_bitpayHelper;
-		$this->_bitpayModel = $_bitpayModel;
-		$this->config = $config;
+		$this->helper = $helper;
+		$this->invoiceFactory = $invoiceFactory;
 		$this->resultPageFactory = $resultPageFactory;
-		parent::__construct ( $context );
+
 	}
 	
 	/**
 	 * @route bitpay invoice url
 	 */
 	public function execute() {
-		
-		$objectmanager = \Magento\Framework\App\ObjectManager::getInstance ();
-		$quote = $objectmanager->get ( '\Magento\Checkout\Model\Session' );		
-		if (empty($quote->getData ( 'last_success_quote_id' ))) {
-			return $this->_redirect ( 'checkout/cart' );
+		$objectManager = ObjectManager::getInstance();
+
+		/* @var $quote \Magento\Checkout\Model\Session */
+		$quote = $objectManager->get('\Magento\Checkout\Model\Session');
+		$lastQuoteId = $quote->getData('last_success_quote_id');
+
+		if (empty($lastQuoteId)) {
+			return $this->_redirect('checkout/cart');
 		}
 		
-		$this->_coreRegistry->register ( 'last_success_quote_id', $quote->getData ( 'last_success_quote_id' ) );
+		$this->_coreRegistry->register('last_success_quote_id', $lastQuoteId);
 		
-		if ($this->config->getValue ( 'payment/bitpay/fullscreen' )) {
-			$invoiceFactory = $this->_bitpayModel;
-			$invoice = $invoiceFactory->load ( $quote->getData ( 'last_success_quote_id' ), 'quote_id' );
-			$resultRedirect = $this->resultFactory->create ( ResultFactory::TYPE_REDIRECT );
-			$resultRedirect->setUrl ( $invoice->getData ( 'url' ) );
+		if ($this->helper->isFullScreen()) {
+			$invoice = $this->invoiceFactory->load($lastQuoteId, 'quote_id' );
+			$resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
+			//echo '<pre>'; var_dump($invoice->getData('url'), $lastQuoteId); exit;
+			$resultRedirect->setUrl( $invoice->getData('url') );
+
 			return $resultRedirect;
-		} else {
-			$resultPage = $this->resultPageFactory->create ();
-			$resultPage->getConfig ()->getTitle ()->set ( __ ( 'Pay with Bitcoin' ) );
+		}
+		else {
+			$resultPage = $this->resultPageFactory->create();
+			$resultPage->getConfig()->getTitle()->set( __ ('Pay with Bitcoin') );
+
 			return $resultPage;
 		}
 	}

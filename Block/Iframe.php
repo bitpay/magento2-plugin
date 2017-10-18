@@ -9,33 +9,50 @@
 
 namespace Bitpay\Core\Block;
 
-class Iframe extends \Magento\Framework\View\Element\Template {
-	protected $_bitpayModel;
+use Bitpay\Core\Helper\Data;
+use Bitpay\Core\Model\Invoice;
+use Magento\Framework\Registry;
+use Magento\Framework\View\Element\Template;
+use Magento\Framework\View\Element\Template\Context;
+
+class Iframe extends Template {
+
+    /**
+     * @var Invoice
+     */
+	protected $invoiceFactory;
 	/**
 	 *
-	 * @var \Bitpay\Core\Helper\Data
+	 * @var Data
 	 */
-	protected $_dataHelper;
-	
-	/**
-	 *
-	 * @param \Magento\Framework\View\Element\Template\Context $context        	
-	 * @param \Bitpay\Core\Model\Invoice $_bitpayModel        	
-	 * @param \Bitpay\Core\Helper\Data $_dataHelper        	
-	 * @param array $data        	
-	 */
-	public function __construct(\Magento\Framework\View\Element\Template\Context $context, \Magento\Framework\Registry $coreRegistry, \Bitpay\Core\Model\Invoice $_bitpayModel, \Bitpay\Core\Helper\Data $_dataHelper, array $data = []) {
-		$this->_bitpayModel = $_bitpayModel;
-		$this->_dataHelper = $_dataHelper;
-		$this->_coreRegistry = $coreRegistry;
-		parent::__construct ( $context, $data );
+	protected $helper;
+
+    /**
+     * @var Registry
+     */
+	protected $coreRegistry;
+
+    /**
+     * Iframe constructor.
+     * @param Context $context
+     * @param Registry $coreRegistry
+     * @param Invoice $invoiceFactory
+     * @param Data $helper
+     * @param array $data
+     */
+	public function __construct(Context $context, Registry $coreRegistry, Invoice $invoiceFactory, Data $helper, array $data = []) {
+        parent::__construct ($context, $data);
+
+		$this->invoiceFactory = $invoiceFactory;
+		$this->helper = $helper;
+		$this->coreRegistry = $coreRegistry;
 	}
-	
-	/**
-	 */
+
+    /**
+     * @return Data
+     */
 	protected function getHelper() {
-		$bitpayHelper = $this->_dataHelper;
-		return $bitpayHelper;
+		return $this->helper;
 	}
 	
 	/**
@@ -44,42 +61,44 @@ class Iframe extends \Magento\Framework\View\Element\Template {
 	 * @return string
 	 */
 	public function getFrameActionUrl() {
-		$last_success_quote_id = $this->getLastQuoteId ();
-		$invoiceFactory = $this->_bitpayModel;
-		$invoice = $invoiceFactory->load ( $last_success_quote_id, 'quote_id' );
-		return $invoice->getData ( 'url' ) . '&view=model&v=2';
+		$invoice = $this->invoiceFactory->load($this->getLastQuoteId(), 'quote_id');
+
+		return $invoice->getData('url') . '&view=model&v=2';
 	}
+
+    /**
+     * @return int|string
+     */
 	public function getLastQuoteId() {
-		$lastSuccessQuoteId = $this->_coreRegistry->registry ( 'last_success_quote_id' );
-		return $lastSuccessQuoteId;
+		return $this->coreRegistry->registry('last_success_quote_id');
 	}
+
+    /**
+     * @return string
+     */
 	public function getValidateUrl() {
-		$validateUrl = $this->getUrl ( 'bitpay/index/index' );
-		return $validateUrl;
+		return $this->getUrl('bitpay/index/index');
 	}
+
+    /**
+     * @return string
+     */
 	public function getSuccessUrl() {
-		$successUrl = $this->getUrl ( 'checkout/onepage/success' );
-		return $successUrl;
+		return $this->getUrl('checkout/onepage/success');
 	}
-	
-	 public function logg($data) {
-    	$writer = new \Zend\Log\Writer\Stream ( BP . '/var/log/payment_bitpay.log' );
-    	$logger = new \Zend\Log\Logger ();
-    	$logger->addWriter ( $writer );
-    	$logger->info ( print_r ( $data, true ) );
-    }
 
+    /**
+     * @return string
+     */
     public function getCartUrl() {
-		$cartUrl = $this->getUrl ( 'checkout/cart/index' );
-		return $cartUrl;
+		return $this->getUrl('checkout/cart/index');
 	}
 
+    /**
+     * @return bool
+     */
 	public function isTestMode() {
-		$mode = $this -> _scopeConfig -> getValue('payment/bitpay/network', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
-		if ($mode == 'testnet') {
-			return true;
-		}
-		return false;
+		return $this->helper->isTestnetNetwork();
 	}
 	
 }

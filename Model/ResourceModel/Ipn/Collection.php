@@ -3,14 +3,12 @@
  * @license Copyright 2011-2014 BitPay Inc., MIT License
  * 
  */
+
 namespace Bitpay\Core\Model\ResourceModel\Ipn;
 
-/**
- * Ipn Collection
- *
- * 
- */
-class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
+use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+
+class Collection extends AbstractCollection
 {
     /**
      * Initialize resource collection

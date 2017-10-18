@@ -32,6 +32,10 @@ define(
                 return true;
             },
 
+            // isPlaceOrderActionAllowed: function() {
+            //     return true;
+            // },
+
             getRedirectionText: function () {
                 
                 var iframeHtml;
@@ -44,7 +48,7 @@ define(
                     } 
                    
                 });
-                return iframeHtml;   //'You will be transfered to <a href="https://bitpay.com" target="_blank">BitPay</a> to complete your purchase when using this payment method.';
+                return iframeHtml;   //'You will be transferred to <a href="https://bitpay.com" target="_blank">BitPay</a> to complete your purchase when using this payment method.';
             },
 
             placeOrder: function (data, event) {
@@ -83,7 +87,7 @@ define(
             /** Returns send check to info */
             getMailingAddress: function() {
                 return window.checkoutConfig.payment.checkmo.mailingAddress;
-            },
+            }
         });
     }
 );
