@@ -77,7 +77,6 @@ class Index extends Action {
 		if ($this->helper->isFullScreen()) {
 			$invoice = $this->invoiceFactory->load($lastQuoteId, 'quote_id' );
 			$resultRedirect = $this->resultFactory->create(ResultFactory::TYPE_REDIRECT);
-			//echo '<pre>'; var_dump($invoice->getData('url'), $lastQuoteId); exit;
 			$resultRedirect->setUrl( $invoice->getData('url') );
 
 			return $resultRedirect;
