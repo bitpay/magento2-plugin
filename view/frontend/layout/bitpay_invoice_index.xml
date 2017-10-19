@@ -6,10 +6,10 @@
  */
 -->
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" layout="1column" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <head>
+        <title>Pay with Bitcoin</title>
+    </head>
     <body>
-    	<head>
-	        <title>Pay with Bitcoin</title>
-	    </head>
         <referenceContainer name="content">
             <block name="bitpay.iframe" class="\Bitpay\Core\Block\Iframe" template="Bitpay_Core::bitpay/iframe.phtml" cacheable="false"/>
         </referenceContainer>

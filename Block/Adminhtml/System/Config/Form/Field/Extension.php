@@ -9,6 +9,7 @@
  */
 namespace Bitpay\Core\Block\Adminhtml\System\Config\Form\Field;
 
+use Magento\Framework\App\ObjectManager;
 use Magento\Framework\Data\Form\Element\AbstractElement;
 
 class Extension extends \Magento\Config\Block\System\Config\Form\Field
@@ -16,15 +17,17 @@ class Extension extends \Magento\Config\Block\System\Config\Form\Field
     /**
      * Render element html
      *
-     * @param \Magento\Framework\Data\Form\Element\AbstractElement $element
+     * @param AbstractElement $element
      * @return string
+     * @throws \Exception
      */
     protected function _getElementHtml(AbstractElement $element)
     {
         if (false === isset($element) || true === empty($element)) {
-            $helper = \Magento\Framework\App\ObjectManager::getInstance()->get('Bitpay\Core\Helper\Data');
-            $helper->debugData('[ERROR] In Bitpay\Core\Block\Adminhtml\System\Config\Form\Field\Extension::_getElementHtml(): Missing or invalid $element parameter passed to function.');
-            throw new \Exception('In Bitpay\Core\Block\Adminhtml\System\Config\Form\Field\Extension::_getElementHtml(): Missing or invalid $element parameter passed to function.');
+            /* @var $helper \Bitpay\Core\Helper\Data */
+            $helper = ObjectManager::getInstance()->get('Bitpay\Core\Helper\Data');
+            $message = $helper->logError('Missing or invalid $element parameter passed to function.', __METHOD__);
+            throw new \Exception($message);
         }
 
         $config = $element->getFieldConfig();

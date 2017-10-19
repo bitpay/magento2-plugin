@@ -6,42 +6,19 @@
 
 namespace Bitpay\Core\Model;
 
-use Magento\Framework\Exception\SampleException;
+use Magento\Framework\App\ObjectManager;
+use Magento\Framework\Model\AbstractModel;
 
 /**
  * Ipntab model
  */
-class Ipn extends \Magento\Framework\Model\AbstractModel
+class Ipn extends AbstractModel
 {
-
-    protected $_ipnCollectionFactory;
-
-    /**
-     * @param \Magento\Framework\Model\Context $context
-     * @param \Magento\Framework\Registry $registry
-     * @param \Magento\Quote\Model\Quote
-     * @param \Magento\Framework\Model\ResourceModel\AbstractResource $resource
-     * @param \Magento\Framework\Data\Collection\Db $resourceCollection
-     * @param array $data
-     */
-    public function __construct(
-        \Magento\Framework\Model\Context $context,
-        \Magento\Framework\Registry $registry,
-        \Bitpay\Core\Model\ResourceModel\Ipn\Collection $_ipnCollectionFactory,
-        \Magento\Framework\Model\ResourceModel\AbstractResource $resource = null,
-        \Magento\Framework\Data\Collection\AbstractDb $resourceCollection = null,
-        array $data = []
-    ) {
-        $this->_ipnCollectionFactory = $_ipnCollectionFactory;
-        parent::__construct($context, $registry, $resource, $resourceCollection, $data);
-    }
 
     /**
      * @return void
      */
-    public function _construct()
-    {
-        parent::_construct();
+    public function _construct() {
         $this->_init('Bitpay\Core\Model\ResourceModel\Ipn');
     }
 
@@ -51,37 +28,47 @@ class Ipn extends \Magento\Framework\Model\AbstractModel
      *
      * @return boolean
      */
-    function GetStatusReceived($quoteId, $statuses) {
-        $objectmanager = \Magento\Framework\App\ObjectManager::getInstance();
+    function GetStatusReceived($quoteId, array $statuses) {
         if (!$quoteId) {
             return false;
         }
 
-        $order = $objectmanager -> get('\Magento\Sales\Model\Order') -> load($quoteId, 'quote_id');
+        $objectManager = ObjectManager::getInstance();
+
+        /* @var $helper \Bitpay\Core\Helper\Data */
+        $helper = $objectManager->get('\Bitpay\Core\Helper\Data');
+
+        /* @var $order \Magento\Sales\Model\Order */
+        $order = $objectManager->get('\Magento\Sales\Model\Order')->load($quoteId, 'quote_id');
+
         if (!$order) {
-            $objectmanager -> get('\Bitpay\Core\Helper\Data') -> debugData('[DEBUG] Bitpay\Core\Model\Ipn::GetStatusReceived(), order not found for quoteId');
+            $helper->logError('Order not found for quoteId . ' . $quoteId, __METHOD__);
             return false;
         }
 
-        $orderIncrementId = $order -> getIncrementId();
+        $orderIncrementId = $order->getIncrementId();
 
         if (false === isset($orderIncrementId) || true === empty($orderIncrementId)) {
-            $objectmanager -> get('\Bitpay\Core\Helper\Data') -> debugData('[DEBUG] Bitpay\Core\Model\Ipn::GetStatusReceived(), orderId not found for quoteId' . $orderIncrementId);
+            $helper->logError('OrderId not found for quoteId ' . $orderIncrementId, __METHOD__);
             return false;
         }
-        $collection = $objectmanager->create('\Bitpay\Core\Model\Ipn')->getCollection();//$this -> _ipnCollectionFactory -> load();
-        
-        foreach ($collection as $i) {
-            $pos=json_decode($i -> getPosData(), true);
+        $collection = $objectManager->create('\Bitpay\Core\Model\Ipn')->getCollection();
+
+        /* @var $ipnItem \Bitpay\Core\Model\Ipn */
+        foreach ($collection as $ipnItem) {
+            $pos = json_decode($ipnItem->getData('pos_data'), true);
+
             if(!isset($pos['orderId'])){
-            continue;
+                continue;
             }
+
             if ($orderIncrementId == $pos['orderId']) {
-                if (in_array($i -> getData('status'), $statuses)) {
+                if (in_array($ipnItem->getData('status'), $statuses)) {
                     return true;
                 }
             }
         }
+
         return false;
     }
 

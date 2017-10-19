@@ -3,16 +3,13 @@
  * @license Copyright 2011-2014 BitPay Inc., MIT License
  * 
  */
+
 namespace Bitpay\Core\Model\ResourceModel\Invoice;
 
-/**
- * Invoice Collection
- *
- *
- */
-class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection
+use Magento\Framework\Model\ResourceModel\Db\Collection\AbstractCollection;
+
+class Collection extends AbstractCollection
 {
-    protected $_isPkAutoIncrement = false;
 
     /**
      * Initialize resource collection
@@ -23,4 +20,5 @@ class Collection extends \Magento\Framework\Model\ResourceModel\Db\Collection\Ab
     {
         $this->_init('Bitpay\Core\Model\Invoice', 'Bitpay\Core\Model\ResourceModel\Invoice');
     }
+
 }

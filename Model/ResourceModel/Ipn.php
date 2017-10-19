@@ -3,12 +3,15 @@
  * @license Copyright 2011-2014 BitPay Inc., MIT License
  * 
  */
+
 namespace Bitpay\Core\Model\ResourceModel;
+
+use Magento\Framework\Model\ResourceModel\Db\AbstractDb;
 
 /**
  * Ipn resource
  */
-class Ipn extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
+class Ipn extends AbstractDb
 {
     /**
      * Initialize resource
@@ -19,6 +22,5 @@ class Ipn extends \Magento\Framework\Model\ResourceModel\Db\AbstractDb
     {
         $this->_init('bitpay_ipns', 'id');
     }
-
   
 }

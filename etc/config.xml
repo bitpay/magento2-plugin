@@ -28,6 +28,8 @@
                 <invoice_complete>complete</invoice_complete>
                 <invoice_expired>canceled</invoice_expired>
                 <invoice_invalid>canceled</invoice_invalid>
+                <pairing_code />
+                <debugReplaceKeys>pairing_code,public_key,private_key,token</debugReplaceKeys>
             </bitpay>
         </payment>
     </default>

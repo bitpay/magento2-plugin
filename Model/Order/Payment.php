@@ -8,6 +8,11 @@
 
 namespace Bitpay\Core\Model\Order;
 
+use Bitpay\Core\Model\Method\Bitcoin;
+use Magento\Framework\DataObject;
+use Magento\Sales\Model\Order;
+use Magento\Sales\Model\Order\Payment as BasePayment;
+
 /**
  * Order payment information
  *
@@ -17,7 +22,7 @@ namespace Bitpay\Core\Model\Order;
  * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
  * @SuppressWarnings(PHPMD.CouplingBetweenObjects)
  */
-class Payment extends  \Magento\Sales\Model\Order\Payment
+class Payment extends BasePayment
 {
    
 
@@ -29,7 +34,7 @@ class Payment extends  \Magento\Sales\Model\Order\Payment
      * @SuppressWarnings(PHPMD.NPathComplexity)
      * @SuppressWarnings(PHPMD.CyclomaticComplexity)
      */
-  public function place()
+    public function place()
     {
         $this->_eventManager->dispatch('sales_order_payment_place_start', ['payment' => $this]);
         $order = $this->getOrder();
@@ -42,40 +47,43 @@ class Payment extends  \Magento\Sales\Model\Order\Payment
         $methodInstance = $this->getMethodInstance();
         $methodInstance->setStore($order->getStoreId());
 
-        $orderState = \Magento\Sales\Model\Order::STATE_NEW;
+        $orderState = Order::STATE_NEW;
         $orderStatus = $methodInstance->getConfigData('order_status');
         $isCustomerNotified = $order->getCustomerNoteNotify();
 
         // Do order payment validation on payment method level
         $methodInstance->validate();
-        $action = $methodInstance->getConfigPaymentAction();
-                $payment = $order -> getPayment();
-        $paymentMethodCode = $payment -> getMethodInstance() -> getCode();
+        $action     = $methodInstance->getConfigPaymentAction();
+        $payment    = $order->getPayment();
+        $paymentMethodCode = $payment->getMethodInstance()->getCode();
         
         if ($action) {
             if ($methodInstance->isInitializeNeeded()) {
-                $stateObject = new \Magento\Framework\DataObject();
+                $stateObject = new DataObject();
                 // For method initialization we have to use original config value for payment action
                 $methodInstance->initialize($methodInstance->getConfigData('payment_action'), $stateObject);
-                if ($paymentMethodCode != 'bitpay'){
-                $orderState = $stateObject->getData('state') ?: $orderState;
-                $orderStatus = $stateObject->getData('status') ?: $orderStatus;
+
+                if ($paymentMethodCode !== Bitcoin::CODE) {
+                    $orderState = $stateObject->getData('state') ?: $orderState;
+                    $orderStatus = $stateObject->getData('status') ?: $orderStatus;
                 }
+
                 $isCustomerNotified = $stateObject->hasData('is_notified')
                     ? $stateObject->getData('is_notified')
                     : $isCustomerNotified;
-            } else {
+            }
+            else {
                  $this->processAction($action, $order);
-                 if ($paymentMethodCode != 'bitpay'){
-                $orderState = \Magento\Sales\Model\Order::STATE_PROCESSING;
-                $orderState = $order->getState() ? $order->getState() : $orderState;
-                $orderStatus = $order->getStatus() ? $order->getStatus() : $orderStatus;
+
+                 if ($paymentMethodCode !== Bitcoin::CODE){
+                    $orderState = Order::STATE_PROCESSING;
+                    $orderState = $order->getState() ? $order->getState() : $orderState;
+                    $orderStatus = $order->getStatus() ? $order->getStatus() : $orderStatus;
                 }
                 
             }
         }  else {
-            $order->setState($orderState)
-                ->setStatus($orderStatus);
+            $order->setState($orderState)->setStatus($orderStatus);
         }
 
         $isCustomerNotified = $isCustomerNotified ?: $order->getCustomerNoteNotify();
@@ -90,20 +98,23 @@ class Payment extends  \Magento\Sales\Model\Order\Payment
 
         return $this;
     }
-    
-    
-        public function addTransactionCommentsToOrder($transaction, $message)
+
+    /**
+     * @param $transaction
+     * @param $message
+     */
+    public function addTransactionCommentsToOrder($transaction, $message)
     {
         $order = $this->getOrder();
-                        $payment = $order -> getPayment();
-        $paymentMethodCode = $payment -> getMethodInstance() -> getCode();
+        $payment = $order->getPayment();
+        $paymentMethodCode = $payment->getMethodInstance()->getCode();
 
         $message = $this->_appendTransactionToMessage($transaction, $message);
-          if ($paymentMethodCode != 'bitpay'){
-        $order->addStatusHistoryComment($message);
+
+        if ($paymentMethodCode !== Bitcoin::CODE) {
+            $order->addStatusHistoryComment($message);
         }
     }
-  
 
     //@codeCoverageIgnoreEnd
 }
