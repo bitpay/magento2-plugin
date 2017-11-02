@@ -2,7 +2,7 @@
   "name": "bitpay/magento2-plugin",
   "description": "Bitcoin payment plugin for Magento using the bitpay.com service.",
   "type": "magento2-module",
-  "version": "1.0.0",
+  "version": "1.0.0-beta",
   "license": [
     "OSL-3.0",
     "AFL-3.0"
@@ -26,6 +26,14 @@
     "psr-4": {
       "Bitpay\\Core\\": ""
     }
+  },
+  "extra": {
+    "map": [
+      [
+        "*",
+        "Bitpay/Core"
+      ]
+    ]
   }
 }
 
