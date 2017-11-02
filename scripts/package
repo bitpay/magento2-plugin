@@ -18,8 +18,13 @@ $distDir    = __DIR__ . '/../build/dist';
 $tmpDistDir = $distDir . '/tmp'; // Files will be placed here temporarly so we can zip/tar them.
 $distFile   = $distDir . '/Bitpay_Core-'.$version; // Without extension
 
-require_once $magentoDir . '/autoload.php';
-require_once $vendorDir . '/autoload.php';
+if(file_exists($magentoDir . '/autoload.php')) {
+    require_once $magentoDir . '/autoload.php';
+}
+//if(file_exists($vendorDir . '/autoload.php')) {
+    require_once $vendorDir . '/autoload.php';
+//}
+
 
 $filesystem = new \Symfony\Component\Filesystem\Filesystem();
 
