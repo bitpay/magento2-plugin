@@ -4,200 +4,63 @@
  * @license Copyright 2011-2014 BitPay Inc., MIT License
  * @see https://github.com/bitpay/magento-plugin/blob/master/LICENSE
  */
+
 error_reporting(E_ALL | E_STRICT);
 ini_set('display_errors', 1);
-date_default_timezone_set('America/New_York'); // Main Office is in Eastern Timezone
 
-/**
- * Various Configuration Settings
- */
-$version    = '1.0.8';
-$vendorDir  = __DIR__ . '/../vendor';
-$magentoDir  = __DIR__ . '/../framework/vendor';
-$distDir    = __DIR__ . '/../build/dist';
-$tmpDistDir = $distDir . '/tmp'; // Files will be placed here temporarly so we can zip/tar them.
-$distFile   = $distDir . '/Bitpay_Core-'.$version; // Without extension
+$moduleRootPath = __DIR__ . '/../';
+$distPath       = $moduleRootPath . 'build';
 
-require_once $magentoDir . '/autoload.php';
-require_once $vendorDir . '/autoload.php';
+$content = file_get_contents($moduleRootPath . 'composer.json');
+$content = json_decode($content, true);
 
-$filesystem = new \Symfony\Component\Filesystem\Filesystem();
+list($vendor, $name) = explode('/', $content['name']);
 
-/**
- * Copy all required files to temp. distribution directory
- */
+$vendor     = str_replace('_', '-', $vendor);
+$name       = str_replace('_', '-', $name);
+$version    = $content['version'];
 
-// start with BitPay's PHP library
-$finder = new \Symfony\Component\Finder\Finder();
-$finder
-    ->files()
-    ->in($vendorDir . '/bitpay/php-client/src')
-    ->exclude('Tests');
+$packageFileName = $vendor . '_' . $name . '-' . $version;
 
-// Find vendor libs 
-foreach ($finder as $file) {
-    $path = $file->getRelativePathname();
-    // Create the lib directory in the tmp dir
-    $filesystem->mkdir(
-        sprintf(
-            '%s/lib/internal/%s',
-            $tmpDistDir,
-            dirname($file->getRelativePathname())
-        )
-    );
-    $filesystem->copy(
-        $file->getRealPath(),
-        sprintf(
-            '%s/lib/internal/%s',
-            $tmpDistDir,
-            $file->getRelativePathname()
-        ),
-        true
-    );
-}
-#$filesystem->mirror('lib/', sprintf('%s/lib/', $tmpDistDir));
+$excludedPaths = [
+    'tests',
+    'scripts',
+    'docs',
+    'build',
+    'build.xml',
+    'vendor',
+    'GUIDE.md',
+    '.git',
+    '.gitignore',
+    '.gitattributes',
+];
 
-// Now find the actual BitPay magento plugin files
-$finder = new \Symfony\Component\Finder\Finder();
-$finder
-    ->files()
-    ->in(__DIR__.'/..')
-    ->exclude('Build')
-    ->exclude('build')
-    ->exclude('build.xml')
-    ->exclude('docs')
-    ->exclude('framework')
-    ->exclude('GUIDE.md')
-    ->exclude('framework')
-    ->exclude('modman')
-    ->exclude('scripts')
-    ->exclude('tests')
-    ->exclude('vendor');
-
-// Find all required BitPay magento Core plugin files
-foreach ($finder as $file) {
-    $path = $file->getRelativePathname();
-    // Create the app directory in the tmp dir
-    $filesystem->mkdir(
-        sprintf(
-            '%s/app/Code/Bitpay/Core/%s',
-            $tmpDistDir,
-            dirname($file->getRelativePathname())
-        )
-    );
-    $filesystem->copy(
-        $file->getRealPath(),
-        sprintf(
-            '%s/app/Code/Bitpay/Core/%s',
-            $tmpDistDir,
-            $file->getRelativePathname()
-        ),
-        true
-    );
-}
-#$filesystem->mirror('app/', sprintf('%s/app/', $tmpDistDir));
-
-//$filesystem->copy('LICENSE', sprintf('%s/app/code/Bitpay/Core/LICENSE', $tmpDistDir));
-//$filesystem->copy('README.md', sprintf('%s/app/code/Bitpay/Core/README.md', $tmpDistDir));
-
-// All required files are in the temp. distribution directory
-
-/**
- * Need to create the package.xml file required by Magento
- */
-$xml = simplexml_load_string('<package/>');
-$xml->addChild('name', 'Bitpay_Core');
-$xml->addChild('version', $version);
-$xml->addChild('stability', 'stable');
-$xml->addChild('license', 'MIT')
-    ->addAttribute('uri', 'https://github.com/bitpay/magento-plugin/blob/master/LICENSE');
-$xml->addChild('channel', 'community');
-$xml->addChild('extends');
-$xml->addChild('summary');
-$xml->addChild('description');
-$xml->addChild('notes');
-
-$authorsNode = $xml->addChild('authors');
-
-$authors = array(
-    array(
-        'Integrations Team', // Name
-        'BitPayInc', // Magento Connect Username
-        'support@bitpay.com', // Email
-    ),
-);
-
-foreach ($authors as $author) {
-    $authorNode = $authorsNode->addChild('author');
-    $authorNode->addChild('name', $author[0]);
-    $authorNode->addChild('user', $author[1]);
-    $authorNode->addChild('email', $author[2]);
+if( ! file_exists($distPath) ) {
+    mkdir($distPath);
 }
 
-$xml->addChild('date', date('Y-m-d'));
-$xml->addChild('time', date('G:i:s'));
-$xml->addChild('compatible');
-$xml->addChild('dependencies');
-
-$requiredNode = $xml->addChild('required', 'php');
-$requiredNode->addAttribute('php_min', '5.4.0');
-$requiredNode->addAttribute('php_max', '7');
-
-$extensionsNode = $xml->addChild('extensions');
-
-foreach (array('openssl', 'mcrypt') as $ext) {
-    $extNode = $extensionsNode->addChild('name', $ext);
-    $extNode->addChild('min');
-    $extNode->addChild('max');
+foreach($excludedPaths as $index => $excludedPath) {
+    if( ! file_exists($moduleRootPath . $excludedPath) ) {
+        unset($excludedPaths[$index]);
+    }
 }
 
-$targetNode = $xml->addChild('contents')->addChild('target');
-$targetNode->addAttribute('name', 'mage');
-
-$finder = new \Symfony\Component\Finder\Finder();
-$finder
-    ->files()
-    ->in($tmpDistDir);
-
-foreach ($finder as $file) {
-    $node        = $targetNode;
-    $directories = explode('/', $file->getRelativePathname());
-    $filename    = array_pop($directories);
-
-    for ($i = 1; $i <= count($directories); $i++) {
-        $dir   = $directories[$i - 1];
-        $nodes = $node->xpath('dir[@name="' . $dir . '"]');
-        if (count($nodes)) {
-            $node = array_pop($nodes);
-        } else {
-            $node = $node->addChild('dir');
-            $node->addAttribute('name', $dir);
-        }
+$zipExcludedPaths = array_map(function($path) use($moduleRootPath) {
+    if( is_dir($moduleRootPath . $path) ) {
+        return $path . '\*';
     }
 
-    $fileNode = $node->addChild('file');
-    $fileNode->addAttribute('name', $file->getBaseName());
-    $fileNode->addAttribute('hash', md5_file($file->getRealPath()));
-}
+    return '"' . $path . '"';
+}, $excludedPaths);
 
-$xml->asXml($tmpDistDir . '/package.xml');
+$output = [];
 
-// package.xml created, just need to tar/zip everything
-$filesystem->remove($distFile.'.zip');
-$filesystem->remove($distFile.'.tgz');
+exec(sprintf('cd %s; zip -r %s * -x %s', $moduleRootPath, $distPath . '/' . $packageFileName . '.zip', implode(' ', $zipExcludedPaths)), $output);
 
-$process = new \Symfony\Component\Process\Process(
-    sprintf('cd %s; tar -czf %s *', $tmpDistDir, $distFile.'.tgz')
-);
+$tarExcludedPaths = array_map(function($path) {
+    return '--exclude=' . $path;
+}, $excludedPaths);
 
-$process->run();
+$output = [];
 
-$process = new \Symfony\Component\Process\Process(
-    sprintf('cd %s; zip -r %s *', $tmpDistDir, $distFile.'.zip')
-);
-
-$process->run();
-
-
-// Cleanup
-$filesystem->remove($tmpDistDir);
+exec(sprintf('cd %s; tar -czf %s * %s', $moduleRootPath, $distPath . '/' . $packageFileName . '.tgz', implode(' ', $tarExcludedPaths)), $output);

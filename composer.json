@@ -7,12 +7,15 @@
     "OSL-3.0",
     "AFL-3.0"
   ],
+  "authors": [
+    {
+      "name": "BitPayInc",
+      "email": "support@bitpay.com",
+      "role": "Integrations Team"
+    }
+  ],
   "require": {
-    "php": "~5.5.0|~5.6.0|~7.0.0",
-    "bitpay/php-client": "~2.2",
-    "symfony/filesystem": "~2.3||~3",
-    "symfony/finder": "~2.3||~3",
-    "magento/magento-composer-installer": "*"
+    "bitpay/php-client": "~2.2"
   },
   "autoload": {
     "files": [
