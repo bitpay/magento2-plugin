@@ -77,6 +77,12 @@ class Bitcoin extends AbstractMethod
         } catch (\Exception $e) {
             $message = $this->getHelper()->logError('Could not authorize transaction due: ' . $e->getMessage(), __METHOD__);
             
+            //display min invoice value error    
+            if(strpos($e->getMessage(), 'Invoice price must be') !== FALSE)
+            {
+		throw new \Magento\Framework\Exception\LocalizedException(__($e->getMessage()));
+            }
+
             throw new \Exception($message);
         }
 
