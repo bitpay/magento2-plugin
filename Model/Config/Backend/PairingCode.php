@@ -79,7 +79,8 @@ class PairingCode extends Value
         }
 
         $this->helper->logInfo('Attempting to pair with BitPay with pairing code ' . $pairingCode, __METHOD__);
-
+        $this->helper->logInfo('Attempting to pair with BitPay using the network \'' . $this->helper->getNetwork() . '\'', __METHOD__);
+        
         try {
             $pairingService = $this->helper->getBitPayService();
             $pairingService->generateAndPersistKeys();

@@ -14,6 +14,8 @@ use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\App\ObjectManager;
 use Magento\Store\Model\StoreManagerInterface;
+use Magento\Framework\Module\ModuleListInterface;
+use Magento\Framework\App\ProductMetadataInterface;
 use Exception;
 
 class Data extends AbstractHelper
@@ -34,6 +36,16 @@ class Data extends AbstractHelper
      * @var StoreManagerInterface
      */
     protected $storeManager;
+    
+    /**
+     * @var ModuleListInterface
+     */
+    protected $_moduleList;
+    
+    /**
+     * @var ProductMetadataInterface
+     */
+    protected $productMetadata;
 
     /**
      * Data constructor.
@@ -42,10 +54,12 @@ class Data extends AbstractHelper
      * @param Config $config
      * @param StoreManagerInterface $storeManager
      */
-	public function __construct(Context $context, Logger $logger, Config $config, StoreManagerInterface $storeManager)
+	public function __construct(Context $context, Logger $logger, Config $config, StoreManagerInterface $storeManager, ModuleListInterface $moduleList, ProductMetadataInterface $productMetadata)
 	{
         parent::__construct($context);
 
+        $this->_moduleList = $moduleList;
+        $this->productMetadata = $productMetadata;
         $this->logger = $logger;
         $this->config = $config;
         $this->storeManager = $storeManager;
@@ -82,6 +96,18 @@ class Data extends AbstractHelper
      * @return string Completed message
      */
     public function debugData($type, $message, $method = null) {
+        //log information about the environment
+        $phpVersion = explode('-', phpversion())[0];
+        $extendedDebugData = array(
+            '[PHP version] ' . $phpVersion,
+            '[Magento version] ' . $this->getMagentoVersion(),
+            '[BitPay plugin version] ' . $this->getExtensionVersion(), 
+        );
+        foreach($extendedDebugData as &$param)
+        {
+            $param = PHP_EOL . "\t\t" . $param;
+        }
+        
         $type = strtoupper($type);
 
         if($message instanceof Exception) {
@@ -97,9 +123,10 @@ class Data extends AbstractHelper
         $debugLine = sprintf('[%s] %s', $type, $message);
 
         if($this->isDebug() && $message) {
+            $this->logger->debug(sprintf('%s', implode('', $extendedDebugData)));
             $this->logger->debug($debugLine);
         }
-
+        
         return $debugLine;
     }
 
@@ -238,4 +265,25 @@ class Data extends AbstractHelper
         return (string) substr('Magento ' . $label, 0, 59);
     }
     
+    /**
+     * Returns the extension version.
+     *
+     * @return string
+     */
+    public function getExtensionVersion()
+    {
+        $moduleCode = 'Bitpay_Core';
+        $moduleInfo = $this->_moduleList->getOne($moduleCode);
+        return $moduleInfo['setup_version'];
+    }
+    
+    /**
+     * Returns the Magento version.
+     *
+     * @return string
+     */
+    public function getMagentoVersion()
+    {
+         return $this->productMetadata->getVersion();
+    }
 }
